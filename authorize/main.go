@@ -94,7 +94,6 @@ func handler(request events.APIGatewayCustomAuthorizerRequest) (events.APIGatewa
 	}
 	// TODO validate jwt token
 	isValid, err := utility.ValidateToken(bearerToken)
-	fmt.Println("TOKEN VALID", isValid)
 	if err != nil {
 		// redirect response
 		// return events.APIGatewayCustomAuthorizerResponse{}, errors.New("Unauthorized")

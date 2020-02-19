@@ -150,25 +150,34 @@ func ValidateToken(jwtkn string) (bool, error) {
 	fmt.Println("VALIDATE TOKEN ", jwtkn)
 	// validate against local secret token file (pem file)
 	claims := &jwtCustomClaims{}
-	// https://godoc.org/github.com/dgrijalva/jwt-go#ParseRSAPublicKeyFromPEM
-	token, err := jwt.ParseWithClaims(jwtkn, claims, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(jwtkn, func(token *jwt.Token) (interface{}, error) {
 		return private_key, nil
 	})
-	// token, err := jwt.Parse(jwtkn, func(t *jwt.Token) (interface{}, error) {
+	// https://godoc.org/github.com/dgrijalva/jwt-go#ParseRSAPublicKeyFromPEM
+	// token, err := jwt.ParseWithClaims(jwtkn, claims, func(t *jwt.Token) (interface{}, error) {
 	// 	return private_key, nil
 	// })
+	// token, err := jwt.ParseWithClaims(
+	// 	jwtkn, claims,
+	// 	func(token *jwt.Token) (interface{}, error) {
+	// 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+	// 			return nil, errors.New("invalid token")
+	// 		}
+	// 		return private_key, nil
+	// 	})
+
+	if claims, ok := token.Claims.(*jwtCustomClaims); ok && token.Valid {
+		fmt.Printf("CLAIMS %v %v", claims, claims.StandardClaims)
+	}
 
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
 			fmt.Println("SIGNATURE INVALID")
-			// return false, err
+			return false, err
 		}
-		// return false, err
+		return false, err
 	}
 	fmt.Println("TOKEN VALID", token.Valid)
-	if !token.Valid {
-		// return false, err
-	}
 	fmt.Println("TOKEN", token)
 	fmt.Println("CLAIMS", claims)
 	// check if expired
