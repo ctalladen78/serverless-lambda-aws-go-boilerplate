@@ -20,11 +20,6 @@ import (
 // AWS Lambda Proxy Request functionality (default behavior)
 type Response events.APIGatewayProxyResponse
 
-type Todo struct {
-	UserID  string `json:"userId"`
-	TodoID  string `json:"noteId"`
-	Content string `json:"content"`
-}
 
 // TODO handler for /todo_new
 

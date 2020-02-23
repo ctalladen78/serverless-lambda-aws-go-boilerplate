@@ -24,3 +24,9 @@ const (
 func (q QueryCondition) String() string {
 	return [...]string{"CREATED_BY", "CREATED_AT"}[q]
 }
+
+type Todo struct {
+	UserID  string `json:"userId"`
+	TodoID  string `json:"noteId"`
+	Content string `json:"content"`
+}
