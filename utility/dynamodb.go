@@ -63,30 +63,31 @@ func (ctrl *DbController) GetItem(t *TodoObject, table string) (interface{}, err
 
 // upsert item if exists then replace, otherwise make new item
 // ensure item follows attribute value schema
-func (ctrl *DbController) PutItem(table string, todo interface{}) (interface{}, error) {
+func (ctrl *DbController) PutItem(table string, item interface{}) (interface{}, error) {
 	// https://stackoverflow.com/questions/38151687/dynamodb-adding-non-key-attributes/56177142
-	newTodoAV, err := dynamodbattribute.MarshalMap(todo) // conver todo item to av map
-	log.Printf("AV Map %v", newTodoAV)
+	newItemAV, err := dynamodbattribute.MarshalMap(item) // conver todo item to av map
+	log.Printf("AV Map %v", newItemAV)
 	if err != nil {
 		return nil, err
 	}
 	input := &dynamodb.PutItemInput{
-		Item:      newTodoAV,
+		Item:      newItemAV,
 		TableName: aws.String(table),
 	}
 	log.Printf("Put Input %v", input)
 	o, err := ctrl.conn.PutItem(input)
 	if err != nil {
+		log.Printf("PUT error", err)
 		return nil, err
 	}
-	// var out map[string]interface{}
-	// log.Printf("Put output %s", o.Attributes)
-	// dynamodbattribute.UnmarshalMap(o.Attributes, &out)
+	var out map[string]interface{}
+	log.Printf("Put output %s", o.Attributes)
+	dynamodbattribute.UnmarshalMap(o.Attributes, &out)
 	return o.Attributes, err
 }
 
 // pass in an empty attribute value struct which will be populated as a result
-func (ctrl *DbController) Scan(table string) (interface{}, error) {
+func (ctrl *DbController) ScanUser(table string) (interface{}, error) {
 	if ctrl.conn == nil {
 		return nil, errors.New("db connection error")
 	}
@@ -95,9 +96,10 @@ func (ctrl *DbController) Scan(table string) (interface{}, error) {
 		TableName: aws.String(table),
 	})
 	if err != nil {
+		fmt.Println("SCAN error", err)
 		return nil, err
 	}
-	var castTo []*TodoObject
+	var castTo []*UserObject
 	// https://github.com/mczal/go-gellato-membership/blob/master/service/UserService.go
 	err = dynamodbattribute.UnmarshalListOfMaps(scanOutput.Items, &castTo)
 	if err != nil {
@@ -109,7 +111,7 @@ func (ctrl *DbController) QueryUser(qc QueryCondition, val string) ([]*UserObjec
 	condition := ""
 	switch qc {
 	case EMAIL:
-		condition = "EMAIL = :val"
+		condition = "email = :val"
 	default: // return all items
 		condition = ""
 	}
@@ -122,6 +124,7 @@ func (ctrl *DbController) QueryUser(qc QueryCondition, val string) ([]*UserObjec
 		},
 		// KeyConditionExpression: "",
 	}
+	fmt.Println("QUERY USER BY EMAIL ", qInput)
 	res, err := ctrl.conn.Query(qInput)
 	castTo := []*UserObject{}
 	err = dynamodbattribute.UnmarshalListOfMaps(res.Items, &castTo)

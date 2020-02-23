@@ -26,8 +26,8 @@ func main() {
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
 
-	// token := request.Headers["Authorization"]
-	// fmt.Println("AUTH ", token)
+	token := request.Headers["x-access-token"]
+	fmt.Println("AUTH ", token)
 
 	// tokenSlice := strings.Split(token, " ")
 	// var bearerToken string
@@ -42,7 +42,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	}
 
 	// https://aws.amazon.com/blogs/compute/simply-serverless-using-aws-lambda-to-expose-custom-cookies-with-api-gateway/
-	newtoken, err := utility.Signin("", c.Email, c.Password)
+	newtoken, err := utility.Signin(token, c.Email, c.Password)
 	if err != nil {
 		e, _ := json.Marshal(map[string]interface{}{"error": "user does not exists"})
 		return Response{

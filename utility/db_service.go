@@ -6,7 +6,11 @@ import (
 )
 
 func ValidateCredentials(email string, password string) (bool, error) {
-	dbCtrl := InitLocalDbConnection("http://localhost:8000")
+	// dbCtrl := InitLocalDbConnection("http://localhost:8000")
+	// see google: github issue setting ifconfig alias dynamodb local
+	// ifconfig lo0 alias 172.16.123.1
+	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
+	fmt.Println("DB PATH %s", dbCtrl)
 	// maybe returns list
 	userList, err := dbCtrl.QueryUser(EMAIL, email)
 	if err != nil {
@@ -28,11 +32,16 @@ func ValidateCredentials(email string, password string) (bool, error) {
 
 func SaveCredentials(email string, password string) (bool, error) {
 	// open dynamodb connection
-	dbCtrl := InitLocalDbConnection("http://localhost:8000")
+	// dbCtrl := InitLocalDbConnection("http://localhost:8000")
+	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
+	fmt.Println("DB PATH %s", dbCtrl)
 	u := &UserObject{
 		Email:    email,
 		Password: password,
 	}
-	dbCtrl.PutItem("usertable", u)
-	return false, nil
+	_, err := dbCtrl.PutItem("usertable", u)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

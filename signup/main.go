@@ -38,7 +38,7 @@ func CreateNewUser(c *Credentials) (string, error) {
 	// 	return "", errors.New("user exists")
 	// }
 	// TODO spawn new goroutine to save credentials
-	// _, err := utility.SaveCredentials(c.Email, c.Password)
+	_, err := utility.SaveCredentials(c.Email, c.Password)
 	// if err != nil {
 	// 	return "", err
 	// }
@@ -96,7 +96,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 		Headers: map[string]string{
 			"Content-Type":           "application/json",
 			"X-MyCompany-Func-Reply": "notes-handler",
-			"Token":                  token,
+			"X-Access-Token":         token,
 		},
 	}
 

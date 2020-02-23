@@ -62,6 +62,7 @@ func Signin(token string, email string, password string) (string, error) {
 	// Set claims
 	claims := unsigned.Claims.(jwt.MapClaims)
 	claims["email"] = email
+	claims["objectid"] = shortuuid.New()
 	claims["admin"] = true
 	// claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	claims["exp"] = expiration
