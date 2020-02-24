@@ -3,7 +3,6 @@ package utility
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/lithammer/shortuuid"
 )
@@ -20,15 +19,12 @@ func ValidateCredentials(email string, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	u := &UserObject{}
 	fmt.Println("QUERY RESULT", userList)
 	for _, v := range userList {
+		fmt.Println("USER ", v)
 		if password == v.Password {
-			return "", err
+			return v.ObjectId, err
 		}
-		u = v
-		fmt.Println("USER FOUND", u)
-		return v.ObjectId, nil
 	}
 	// not found
 	return "", errors.New("USER NOT FOUND")
@@ -51,40 +47,20 @@ func SaveCredentials(email string, password string) (bool, error) {
 	return true, nil
 }
 
-func GetTodoList() ([]Todo, error) {
-	out := []Todo{}
-	// l := []map[string]*dynamodb.AttributeValue{}
+func GetTodoListByUser(userid string) ([]*TodoObject, error) {
 
-	// svc := dynamodb.New(session.Must(session.NewSession()))
-	// TODO dynamodb query or scan
-	// input := &dynamodb.QueryInput{
-
-	// }
-	// todoList := svc.Query(input)
-	// input := &dynamodb.ScanInput{
-	// 	TableName: aws.String("Todo"),
-	// }
-	// todoList, err := svc.Scan(input)
-	// l = todoList.Items
-	t1 := &Todo{
-		UserID:  "",
-		TodoID:  "",
-		Content: "",
+	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
+	fmt.Println("DB PATH %s", dbCtrl)
+	todoList, err := dbCtrl.QueryTodo("todotable", CREATED_BY, userid)
+	if err != nil {
+		// return Response{StatusCode: 404}, err
+		return nil, err
 	}
-	t2 := &Todo{
-		UserID:  "",
-		TodoID:  "",
-		Content: "",
-	}
-	out = append(out, *t1)
-	out = append(out, *t2)
 
-	// err = dynamodbattribute.UnmarshalListOfMaps(l, out)
-	// if err != nil {
-	// 	// return Response{StatusCode: 404}, err
-	// 	return nil, err
-	// }
-	return out, nil
+	// test object
+	todoList = append(todoList, &TodoObject{Todo: "testtest"})
+	fmt.Println("TODO LIST ", todoList)
+	return todoList, nil
 
 }
 
@@ -92,7 +68,7 @@ func PutTodo(todo *TodoObject) (bool, error) {
 	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
 	fmt.Println("DB PATH %s", dbCtrl)
 	todo.ObjectId = shortuuid.New()
-	todo.CreatedAt = time.Now()
+	// todo.CreatedAt = time.Now()
 	_, err := dbCtrl.PutItem("todotable", todo)
 	if err != nil {
 		return false, err

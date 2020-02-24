@@ -1,7 +1,5 @@
 package utility
 
-import "time"
-
 type UserObject struct {
 	ObjectId string `json:"objectid"`
 	Email    string `json:"email"`
@@ -9,10 +7,10 @@ type UserObject struct {
 }
 
 type TodoObject struct {
-	ObjectId  string    `json:"objectid"`
-	CreatedAt time.Time `json:"created_at"`
-	Todo      string    `json:"todo"`
-	CreatedBy string    `json:"created_by"`
+	ObjectId string `json:"objectid"`
+	// CreatedAt time.Time `json:"created_at"`
+	Todo      string `json:"todo"`
+	CreatedBy string `json:"created_by"`
 }
 
 // https://yourbasic.org/golang/iota/

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -19,20 +20,17 @@ func main() {
 	lambda.Start(Handler)
 }
 
-func checkUserExists(email string, pwd string) (string, error) {
-	return utility.ValidateCredentials(email, pwd)
-}
-
 func CreateNewUser(c *utility.Credentials) (string, error) {
 	fmt.Println("NEW USER CREDS", c)
 
 	// check if user exists
-	// didUserExist, err := checkUserExists(c.Email, c.Password)
-	// if didUserExist {
-	// 	return "", errors.New("user exists")
-	// }
+	userId, err := utility.ValidateCredentials(c.Email, c.Password)
+	if userId != "" {
+		fmt.Println("USER EXISTS ", userId)
+		return "", errors.New("user exists ")
+	}
 	// TODO spawn new goroutine to save credentials
-	_, err := utility.SaveCredentials(c.Email, c.Password)
+	_, err = utility.SaveCredentials(c.Email, c.Password)
 	// if err != nil {
 	// 	return "", err
 	// }

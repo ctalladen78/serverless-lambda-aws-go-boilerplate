@@ -24,7 +24,7 @@ type Response events.APIGatewayProxyResponse
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
 	var buf bytes.Buffer
 
-	todoList, err := utility.GetTodoList()
+	todoList, err := utility.GetTodoListByUser(request.QueryStringParameters["userid"])
 	if err != nil {
 		return Response{StatusCode: 404}, err
 	}

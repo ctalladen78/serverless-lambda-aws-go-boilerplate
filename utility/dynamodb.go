@@ -137,13 +137,13 @@ func (ctrl *DbController) QueryUser(qc QueryCondition, val string) ([]*UserObjec
 // using dynamodb.Query as opposed to dynamodb.Scan
 // query by enums CREATED_AT | CREATED_BY
 // --key-condition-expression 'Artist = :a AND SongTitle BETWEEN :t1 AND :t2' \
-func (ctrl *DbController) QueryFilter(table string, qc QueryCondition, val string) (interface{}, error) {
+func (ctrl *DbController) QueryTodo(table string, qc QueryCondition, val string) ([]*TodoObject, error) {
 	condition := ""
 	switch qc {
 	case CREATED_AT:
-		condition = "CREATED_AT = :val"
+		condition = "created_at = :val"
 	case CREATED_BY: // return items created by
-		condition = "id = :val"
+		condition = "created_by = :val"
 	default: // return all items
 		condition = ""
 	}
@@ -156,9 +156,11 @@ func (ctrl *DbController) QueryFilter(table string, qc QueryCondition, val strin
 		},
 		// KeyConditionExpression: "",
 	}
+	fmt.Printf("QUERY TODO BY %s %s ", qc, qInput)
 	res, err := ctrl.conn.Query(qInput)
 	castTo := []*TodoObject{}
 	err = dynamodbattribute.UnmarshalListOfMaps(res.Items, &castTo)
+
 	if err != nil {
 		return nil, err
 	}

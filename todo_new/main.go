@@ -49,7 +49,8 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	// }
 
 	myNote := &utility.TodoObject{
-		CreatedBy: cognitoIdentityID,
+		// CreatedBy: cognitoIdentityID,
+		CreatedBy: "USER1", // TODO get userid from jwt token claim
 		Todo:      data.Data,
 	}
 	_, err = utility.PutTodo(myNote)
