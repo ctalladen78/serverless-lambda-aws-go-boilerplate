@@ -51,7 +51,7 @@ functions:
     events:
     - http:
         path: /todo_new
-        method: get
+        method: post
         authorizer:
           name: authorize
           resultTtlInSeconds: 0

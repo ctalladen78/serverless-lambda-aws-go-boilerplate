@@ -14,22 +14,16 @@ import (
 
 type Response events.APIGatewayProxyResponse
 
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-}
-
 // TODO return auth access token
 func main() {
 	lambda.Start(Handler)
 }
 
-func checkUserExists(email string, pwd string) (bool, error) {
+func checkUserExists(email string, pwd string) (string, error) {
 	return utility.ValidateCredentials(email, pwd)
 }
 
-func CreateNewUser(c *Credentials) (string, error) {
+func CreateNewUser(c *utility.Credentials) (string, error) {
 	fmt.Println("NEW USER CREDS", c)
 
 	// check if user exists
@@ -57,7 +51,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	// TODO use SSL
 	// https://stackoverflow.com/questions/14409930/how-to-safely-include-password-in-query-string
 	fmt.Println("REQUEST BODY", request.Body)
-	c := &Credentials{
+	c := &utility.Credentials{
 		Username: request.Headers["x-username"],
 		Password: request.Headers["x-password"],
 		Email:    request.Headers["x-email"],

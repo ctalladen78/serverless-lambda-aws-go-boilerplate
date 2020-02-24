@@ -28,21 +28,21 @@ func InitLocalDbConnection(h string) *DbController {
 }
 
 // get item by key attributes as per table schema
-func (ctrl *DbController) GetItem(t *TodoObject, table string) (interface{}, error) {
+func (ctrl *DbController) GetTodoItem(t *TodoObject, table string) (interface{}, error) {
 	// https://github.com/ace-teknologi/memzy
 	// https://github.com/nullseed/lesshomeless-backend/blob/master/services/user/dynamodb/dynamodb.go
 	// https://github.com/mczal/go-gellato-membership/blob/master/service/UserService.go
 	// building pkey for search query
 	var pkey = map[string]*dynamodb.AttributeValue{
-		"id": {
-			S: aws.String(t.Id),
+		"objectid": {
+			S: aws.String(t.ObjectId),
 		},
-		"todo": {
-			S: aws.String(t.Todo),
-		},
+		// "todo": {
+		// 	S: aws.String(t.Todo),
+		// },
 	}
 
-	// TodoObject and table key attributes do not match because of extra "cratedat" field
+	// TodoObject and table key attributes do not match because of extra "createdat" field
 	// pkey, err := dynamodbattribute.MarshalMap(t)
 	input := &dynamodb.GetItemInput{
 		TableName: aws.String(table),

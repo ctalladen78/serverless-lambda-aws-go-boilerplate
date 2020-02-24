@@ -20,11 +20,6 @@ type jwtCustomClaims struct {
 	jwt.StandardClaims
 }
 
-type Credentials struct {
-	Email    string `json:"email"`
-	Password string `json:"email"`
-}
-
 // parse token for validity
 // if token expired then issue new token with claims
 // check claims.credentials with db
@@ -33,14 +28,17 @@ type Credentials struct {
 func Signin(token string, email string, password string) (string, error) {
 
 	// validate signature
-	isValid, err := ValidateToken(token)
-	if err != nil {
-		if !isValid {
+	if token != "" {
+		isValid, err := ValidateToken(token)
+		if err != nil {
+			if !isValid {
+				return "", errors.New("INVALID TOKEN")
+			}
 			return "", errors.New("INVALID TOKEN")
 		}
-		return "", errors.New("INVALID TOKEN")
+
 	}
-	_, err = ValidateCredentials(email, password)
+	userID, err := ValidateCredentials(email, password)
 	if err != nil {
 		return "", errors.New("INVALID CREDENTIALS")
 	}
@@ -62,7 +60,7 @@ func Signin(token string, email string, password string) (string, error) {
 	// Set claims
 	claims := unsigned.Claims.(jwt.MapClaims)
 	claims["email"] = email
-	claims["objectid"] = shortuuid.New()
+	claims["objectid"] = userID
 	claims["admin"] = true
 	// claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 	claims["exp"] = expiration

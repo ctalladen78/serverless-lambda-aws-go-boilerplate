@@ -3,9 +3,13 @@ package utility
 import (
 	"errors"
 	"fmt"
+	"time"
+
+	"github.com/lithammer/shortuuid"
 )
 
-func ValidateCredentials(email string, password string) (bool, error) {
+// return userId if exists
+func ValidateCredentials(email string, password string) (string, error) {
 	// dbCtrl := InitLocalDbConnection("http://localhost:8000")
 	// see google: github issue setting ifconfig alias dynamodb local
 	// ifconfig lo0 alias 172.16.123.1
@@ -14,20 +18,20 @@ func ValidateCredentials(email string, password string) (bool, error) {
 	// maybe returns list
 	userList, err := dbCtrl.QueryUser(EMAIL, email)
 	if err != nil {
-		return false, err
+		return "", err
 	}
 	u := &UserObject{}
 	fmt.Println("QUERY RESULT", userList)
 	for _, v := range userList {
 		if password == v.Password {
-			return false, err
+			return "", err
 		}
 		u = v
 		fmt.Println("USER FOUND", u)
-		return true, nil
+		return v.ObjectId, nil
 	}
 	// not found
-	return false, errors.New("USER NOT FOUND")
+	return "", errors.New("USER NOT FOUND")
 }
 
 func SaveCredentials(email string, password string) (bool, error) {
@@ -38,6 +42,7 @@ func SaveCredentials(email string, password string) (bool, error) {
 	u := &UserObject{
 		Email:    email,
 		Password: password,
+		ObjectId: shortuuid.New(),
 	}
 	_, err := dbCtrl.PutItem("usertable", u)
 	if err != nil {
@@ -81,4 +86,16 @@ func GetTodoList() ([]Todo, error) {
 	// }
 	return out, nil
 
+}
+
+func PutTodo(todo *TodoObject) (bool, error) {
+	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
+	fmt.Println("DB PATH %s", dbCtrl)
+	todo.ObjectId = shortuuid.New()
+	todo.CreatedAt = time.Now()
+	_, err := dbCtrl.PutItem("todotable", todo)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }

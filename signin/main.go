@@ -13,12 +13,6 @@ import (
 
 type Response events.APIGatewayProxyResponse
 
-type Credentials struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-}
-
 func main() {
 	lambda.Start(Handler)
 }
@@ -27,7 +21,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	var buf bytes.Buffer
 
 	token := request.Headers["x-access-token"]
-	fmt.Println("AUTH ", token)
+	fmt.Println("AUTH TOKEN", token)
 
 	// tokenSlice := strings.Split(token, " ")
 	// var bearerToken string
@@ -35,7 +29,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	// 	bearerToken = tokenSlice[len(tokenSlice)-1]
 	// }
 
-	c := &Credentials{
+	c := &utility.Credentials{
 		Username: request.Headers["x-username"],
 		Password: request.Headers["x-password"],
 		Email:    request.Headers["x-email"],

@@ -1,14 +1,18 @@
 package utility
 
+import "time"
+
 type UserObject struct {
+	ObjectId string `json:"objectid"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type TodoObject struct {
-	Id        string `json:"id"`
-	CreatedAt string `json:"created_at"`
-	Todo      string `json:"todo"`
+	ObjectId  string    `json:"objectid"`
+	CreatedAt time.Time `json:"created_at"`
+	Todo      string    `json:"todo"`
+	CreatedBy string    `json:"created_by"`
 }
 
 // https://yourbasic.org/golang/iota/
@@ -29,4 +33,9 @@ type Todo struct {
 	UserID  string `json:"userId"`
 	TodoID  string `json:"noteId"`
 	Content string `json:"content"`
+}
+type Credentials struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
