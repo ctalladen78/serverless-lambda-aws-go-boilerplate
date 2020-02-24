@@ -11,39 +11,27 @@ Header:
 "Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbCJ9.aVWLjUhHk_6BjlbUT_E-F34Tt31eMa_54_PJJnnJNwk"
 ```
 
+### TESTING REQUESTS
 
-Serverless: Stack update finished...
-Service Information
-service: aws-auth-cognito
-stage: dev
-region: eu-west-1
-stack: aws-auth-cognito-dev
-resources: 22
-api keys:
-  None
-endpoints:
-  GET - https://6sw3x5b3lf.execute-api.eu-west-1.amazonaws.com/dev/hello-world
-  GET - https://6sw3x5b3lf.execute-api.eu-west-1.amazonaws.com/dev/todo
-functions:
-  authorize: aws-auth-cognito-dev-authorize
-  hello-world: aws-auth-cognito-dev-hello-world
-  todo: aws-auth-cognito-dev-todo
-layers:
-  None
-
-Serverless: Stack update finished...
-Service Information
-service: aws-auth-cognito
-stage: dev
-region: us-east-1
-stack: aws-auth-cognito-dev
-resources: 22
-api keys:
-  None
-endpoints:
-  GET - https://ns47vf9fu0.execute-api.us-east-1.amazonaws.com/dev/hello-world
-  GET - https://ns47vf9fu0.execute-api.us-east-1.amazonaws.com/dev/todo
-functions:
-  authorize: aws-auth-cognito-dev-authorize
-  hello-world: aws-auth-cognito-dev-hello-world
-  todo: aws-auth-cognito-dev-todo
+* POST endpoint `signup`
+```
+  header : "x-username" "x-password" "x-email"
+  body
+  ```
+* POST endpoint `signin`
+```
+  header : "x-username" "x-password" "x-email" "x-access-token"
+  body
+  ```
+* GET endpoint `todo_list`
+uses authorization endpoint
+```
+  header
+  body
+  ```
+* POST endpoint `todo_new`
+uses authorization endpoint
+```
+  header : "Authorization : Bearer <TOKEN>"
+  body : "{"data" : "<DATA>"}"
+  ```
