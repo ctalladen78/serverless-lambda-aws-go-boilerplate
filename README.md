@@ -35,3 +35,13 @@ uses authorization endpoint
   header : "Authorization : Bearer <TOKEN>"
   body : "{"data" : "<DATA>"}"
   ```
+
+### TABLE SCHEMA
+
+* todotable:
+hash key: "created_by" 
+range key: "objectid" // "PREFIX-objectId"
+
+* usertable:
+hash key: "email"
+range key: "password"

@@ -51,7 +51,7 @@ func GetTodoListByUser(userid string) ([]*TodoObject, error) {
 
 	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
 	fmt.Println("DB PATH %s", dbCtrl)
-	todoList, err := dbCtrl.QueryTodo("todotable", CREATED_BY, userid)
+	todoList, err := dbCtrl.QueryTodo("todotable1", CREATED_BY, userid)
 	if err != nil {
 		// return Response{StatusCode: 404}, err
 		return nil, err
@@ -64,12 +64,12 @@ func GetTodoListByUser(userid string) ([]*TodoObject, error) {
 
 }
 
-func PutTodo(todo *TodoObject) (bool, error) {
+func PutTodo(table string, todo *TodoObject) (bool, error) {
 	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
 	fmt.Println("DB PATH %s", dbCtrl)
-	todo.ObjectId = shortuuid.New()
+	todo.ObjectId = "TODO-" + shortuuid.New()
 	// todo.CreatedAt = time.Now()
-	_, err := dbCtrl.PutItem("todotable", todo)
+	_, err := dbCtrl.PutItem(table, todo)
 	if err != nil {
 		return false, err
 	}

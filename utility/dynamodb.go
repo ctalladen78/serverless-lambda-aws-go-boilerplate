@@ -137,27 +137,35 @@ func (ctrl *DbController) QueryUser(qc QueryCondition, val string) ([]*UserObjec
 // using dynamodb.Query as opposed to dynamodb.Scan
 // query by enums CREATED_AT | CREATED_BY
 // --key-condition-expression 'Artist = :a AND SongTitle BETWEEN :t1 AND :t2' \
-func (ctrl *DbController) QueryTodo(table string, qc QueryCondition, val string) ([]*TodoObject, error) {
+func (ctrl *DbController) QueryTodo(table string, qc QueryCondition, user string) ([]*TodoObject, error) {
 	condition := ""
 	switch qc {
 	case CREATED_AT:
 		condition = "created_at = :val"
 	case CREATED_BY: // return items created by
-		condition = "created_by = :val"
+		condition = "created_by = :user and begins_with(objectid, :type)"
 	default: // return all items
 		condition = ""
 	}
+	// https://johnmackenzie.co.uk/post/setting-up-dynamodb-for-local-development/
+	// https://www.dynamodbguide.com/expression-basics/
 	qInput := &dynamodb.QueryInput{
 		TableName: aws.String(table),
 		// AttributesToGet : , // select only certain attribute values
 		KeyConditionExpression: aws.String(condition),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
-			":val": {S: aws.String(val)}, // use this value in an expression
+			":user": {S: aws.String(user)},
+			":type": {S: aws.String("TODO")},
 		},
-		// KeyConditionExpression: "",
 	}
 	fmt.Printf("QUERY TODO BY %s %s ", qc, qInput)
 	res, err := ctrl.conn.Query(qInput)
+	if err != nil {
+		fmt.Println(err)
+	}
+	for k, v := range res.Items {
+		fmt.Println("QUERY RESULT ", k, v)
+	}
 	castTo := []*TodoObject{}
 	err = dynamodbattribute.UnmarshalListOfMaps(res.Items, &castTo)
 
@@ -218,12 +226,7 @@ func (ctrl *DbController) Update(table string, request *events.APIGatewayProxyRe
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO print resulting updated attributes
-	// var u *TodoObject
 	out := &TodoObject{}
-
-	// convert db result into inmemory struct
 	err = dynamodbattribute.UnmarshalMap(result.Attributes, out)
 	if err != nil {
 		return nil, err

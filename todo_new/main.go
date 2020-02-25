@@ -53,7 +53,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 		CreatedBy: "USER1", // TODO get userid from jwt token claim
 		Todo:      data.Data,
 	}
-	_, err = utility.PutTodo(myNote)
+	_, err = utility.PutTodo("todotable1", myNote)
 	if err != nil {
 		return Response{StatusCode: 404}, err
 	}

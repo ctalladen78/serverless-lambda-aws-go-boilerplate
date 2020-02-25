@@ -92,7 +92,6 @@ func handler(request events.APIGatewayCustomAuthorizerRequest) (events.APIGatewa
 	if len(tokenSlice) > 1 {
 		bearerToken = tokenSlice[len(tokenSlice)-1]
 	}
-	// TODO validate jwt token
 	isValid, err := utility.ValidateToken(bearerToken)
 	if err != nil {
 		// redirect response
