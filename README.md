@@ -1,15 +1,9 @@
 
-## TEST send this jwt to localhost:3000/todo_list
-## using postman with bearer token auth header
-## manually verify this token by signing at jwt.io with private key `PRIVATE_KEY`
-```
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbCJ9.aVWLjUhHk_6BjlbUT_E-F34Tt31eMa_54_PJJnnJNwk
-```
+### Environment 
 
-```
-Header:
-"Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlbWFpbCJ9.aVWLjUhHk_6BjlbUT_E-F34Tt31eMa_54_PJJnnJNwk"
-```
+* serverless framework
+* npm serverless-offline
+* aws dynamodb-local
 
 ### TESTING REQUESTS
 
