@@ -3,6 +3,7 @@ package utility
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/lithammer/shortuuid"
 )
@@ -68,7 +69,7 @@ func PutTodo(table string, todo *TodoObject) (bool, error) {
 	dbCtrl := InitLocalDbConnection("http://172.16.123.1:8000")
 	fmt.Println("DB PATH %s", dbCtrl)
 	todo.ObjectId = "TODO-" + shortuuid.New()
-	// todo.CreatedAt = time.Now()
+	todo.CreatedAt = time.Time.Format(time.Now(), time.RFC3339)
 	_, err := dbCtrl.PutItem(table, todo)
 	if err != nil {
 		return false, err

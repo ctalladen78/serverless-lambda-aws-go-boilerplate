@@ -13,8 +13,8 @@ type Credentials struct {
 }
 
 type TodoObject struct {
-	ObjectId string `json:"objectid"`
-	// CreatedAt time.Time `json:"created_at"`
+	ObjectId  string `json:"objectid"`
+	CreatedAt string `json:"created_at"`
 	Todo      string `json:"todo"`
 	CreatedBy string `json:"created_by"`
 }

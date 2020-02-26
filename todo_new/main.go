@@ -48,12 +48,12 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Respon
 	// 	}, err
 	// }
 
-	myNote := &utility.TodoObject{
+	t := &utility.TodoObject{
 		// CreatedBy: cognitoIdentityID,
 		CreatedBy: "USER1", // TODO get userid from jwt token claim
 		Todo:      data.Data,
 	}
-	_, err = utility.PutTodo("todotable1", myNote)
+	_, err = utility.PutTodo("todotable1", t)
 	if err != nil {
 		return Response{StatusCode: 404}, err
 	}
